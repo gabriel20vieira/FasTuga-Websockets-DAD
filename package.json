@@ -1,0 +1,18 @@
+{
+  "name": "fastuga-websockets-dad",
+  "version": "1.0.0",
+  "description": "Websockets server for FasTuga project",
+  "main": "main.js",
+  "scripts": {
+    "dev": "nodemon main.js",
+    "prod": "node main.js"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "socket.io": "^4.5.4"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
+  }
+}
