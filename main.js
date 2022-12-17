@@ -52,8 +52,15 @@ const broadcastEvents = [
     "board-update",
 ]
 
-const employeesEvents = [
-    "orders-update",
+const employeesEvents = []
+
+const typeSpecific = [
+    {
+        "items-update": [UserType.DELIVERY, UserType.CHEF]
+    },
+    {
+        "orders-update": [UserType.DELIVERY, UserType.MANAGER]
+    }
 ]
 
 httpServer.listen(8080, () => {
@@ -106,5 +113,15 @@ io.on('connection', (socket) => {
         socket.on(e, (data = null) => {
             socket.to(UserType.EMPLOYEE).emit(e, data)
         })
+    })
+
+    typeSpecific.forEach(group => {
+        for (const [event, types] of Object.entries(group)) {
+            types.forEach(type => {
+                socket.on(event, (data = null) => {
+                    socket.to(type).emit(event, data)
+                })
+            })
+        }
     })
 })
