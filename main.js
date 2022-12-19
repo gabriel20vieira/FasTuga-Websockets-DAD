@@ -54,14 +54,16 @@ const broadcastEvents = [
 
 const employeesEvents = []
 
-const typeSpecific = [
-    {
-        "items-update": [UserType.DELIVERY, UserType.CHEF]
-    },
-    {
-        "orders-update": [UserType.DELIVERY, UserType.MANAGER]
-    }
+const typeSpecific = {
+    "items-update": [UserType.DELIVERY, UserType.CHEF],
+    "orders-update": [UserType.DELIVERY, UserType.MANAGER, UserType.CUSTOMER],
+    "users-update": [UserType.MANAGER],
+}
+
+const toUser = [
+    'block-user',
 ]
+
 
 httpServer.listen(8080, () => {
     console.clear()
@@ -103,6 +105,14 @@ io.on('connection', (socket) => {
         console.log(`Client ${Colors.FgYellow}${socket.id}${Colors.Reset} notify ${Colors.FgCyan}${event}${Colors.Reset}`)
     })
 
+    toUser.forEach(e => {
+        socket.on(e, (data = null) => {
+            if (data[0].id) {
+                socket.to(data[0].id).emit(e, data)
+            }
+        })
+    })
+
     broadcastEvents.forEach(e => {
         socket.on(e, (data = null) => {
             socket.broadcast.emit(e, data)
@@ -115,13 +125,11 @@ io.on('connection', (socket) => {
         })
     })
 
-    typeSpecific.forEach(group => {
-        for (const [event, types] of Object.entries(group)) {
-            types.forEach(type => {
-                socket.on(event, (data = null) => {
-                    socket.to(type).emit(event, data)
-                })
+    for (const [event, types] of Object.entries(typeSpecific)) {
+        types.forEach(type => {
+            socket.on(event, (data = null) => {
+                socket.to(type).emit(event, data)
             })
-        }
-    })
+        })
+    }
 })
