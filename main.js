@@ -1,9 +1,15 @@
+
+const allowOrigin = "http://localhost:5173";
+const origin = "http://localhost"
+const port = 8081
+
+
 const httpServer = require('http').createServer()
 
 const io = require("socket.io")(httpServer, {
     cors: {
         // The origin is the same as the Vue app domain. Change if necessary
-        origin: "http://localhost:5173",
+        origin: allowOrigin,
         methods: ["GET", "POST"],
         credentials: true
     }
@@ -65,9 +71,9 @@ const toUser = [
 ]
 
 
-httpServer.listen(8080, () => {
+httpServer.listen(port, () => {
     console.clear()
-    console.log('\nListening on http://localhost:8080')
+    console.log(`\nListening on ${origin}:${port}`)
 })
 
 io.on('connection', (socket) => {
